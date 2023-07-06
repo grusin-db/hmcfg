@@ -1,0 +1,12 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "dns": { "type": "string" },
+      "provider": { "type": "string" }
+    },
+    "additionalProperties": false,
+    "required": [ "dns", "provider" ]
+  }
+}
