@@ -1,0 +1,10 @@
+[
+  {
+    "dns": "somehost.com",
+    "provider": "azure"
+  },
+  {
+    "dns": "databricks.com",
+    "provider": "aws"
+  }
+]
