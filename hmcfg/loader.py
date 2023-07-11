@@ -93,21 +93,33 @@ def load_configs(root_path:str, datasets:list[dict], filter=None, metadata_prefi
   matches = match(files, datasets)
 
   res = {}
+  pk_res= {}
 
   for dataset_name, m in matches.items():
     if not filter(dataset_name, m):
       continue
 
     data = res[dataset_name] = res.get(dataset_name, [])
+    pk_data = pk_res[dataset_name] = pk_res.get(dataset_name, {})
 
     for f, labels in m['files'].items():
       records = load_json_file(f, m['schema'], root_path=root_path)
-      for rec in records:
+      key_columns = m['key']
+
+      for idx, rec in enumerate(records):
         if metadata_prefix:
           rec[metadata_prefix + 'filename'] = f
+          rec[metadata_prefix + 'line'] = idx+1
           for k, v in labels.items():
             res[metadata_prefix + k] = v
-        
+
+        if key_columns:
+          key = tuple([rec[c] for c in key_columns])
+          if key in pk_data:
+            raise ValueError(f"Duplicated key {key} found in dataset {dataset_name}: files {f}:{idx+1} and {pk_data[key]} are having the same key")
+          
+          pk_data[key] = f"{f}:{idx+1}"
+
         data.append(rec)
   
   return res

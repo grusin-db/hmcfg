@@ -1,4 +1,4 @@
-from hmcfg import discovery
+from hmcfg import loader
 import pytest
 
 datasets = {
@@ -7,7 +7,7 @@ datasets = {
       "{team}/{env}/*vm.json"
       ,"{team}/*vm.json"
     ],
-    'schema': discovery.load_json_schema('tests/data.schema/vm.json'),
+    'schema': loader.load_json_schema('tests/data.schema/vm.json'),
     'key': ['name']
   },
   'dns': {
@@ -15,21 +15,21 @@ datasets = {
       "{team}/{env}/*dns.json"
       ,"{team}/*dns.json"
     ],
-    'schema': discovery.load_json_schema('tests/data.schema/dns.json'),
-    'key': []
+    'schema': loader.load_json_schema('tests/data.schema/dns.json'),
+    'key': ['dns', 'provider']
   }
 }
 
 def test_json_schema():
-  schema = discovery.load_json_schema('tests/data.schema/dns.json')
-  discovery.load_json_file("tests/data/team01/prd/dns.json", schema)
+  schema = loader.load_json_schema('tests/data.schema/dns.json')
+  loader.load_json_file("tests/data/team01/prd/dns.json", schema)
 
   #this shall not pass
   with pytest.raises(Exception):
-    discovery.load_json_file("tests/data/team01/prd/vm.json", schema)
+    loader.load_json_file("tests/data/team01/prd/vm.json", schema)
 
 def test_discover_files():
-  files = discovery.get_config_file_names("tests/data")
+  files = loader.get_config_file_names("tests/data")
 
   assert set(files) == set(['vm.json',
     'team01/vm.json',
@@ -39,7 +39,7 @@ def test_discover_files():
     'team01/prd/dns.json'
   ])
 
-  matches = discovery.match(files, datasets)
+  matches = loader.match(files, datasets)
 
   print(matches)
 
@@ -70,14 +70,14 @@ def test_discover_files():
   }
 
 def test_config_loading():
-  data = discovery.load_configs("tests/data", datasets)
+  data = loader.load_configs("tests/data", datasets)
   
   assert None in data
   assert 'dns' in data
   assert 'virtual_machines' in data
 
   assert data['dns'] == [
-    {'_filename': 'team01/prd/dns.json', 'dns': 'somehost.com', 'provider': 'azure'},
-    {'_filename': 'team01/prd/dns.json', 'dns': 'databricks.com', 'provider': 'aws'}
+    {'_filename': 'team01/prd/dns.json', '_line': 1, 'dns': 'somehost.com', 'provider': 'azure'},
+    {'_filename': 'team01/prd/dns.json', '_line': 2, 'dns': 'databricks.com', 'provider': 'aws'}
   ]
 
