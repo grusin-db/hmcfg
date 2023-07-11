@@ -1,0 +1,26 @@
+[project]
+name = "hmcfg"
+version = "0.0.1"
+authors = [
+  { name="Grzegorz Rusin", email="grzegorz.rusin@databricks.com" },
+]
+description = "Hierarchical and Metadata Configuration loader and validator"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/grusin-db/hmcfg"
+"Bug Tracker" = "https://github.com/grusin-db/hmcfg/issues"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["hmcfg"]
